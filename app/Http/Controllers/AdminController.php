@@ -6,6 +6,7 @@ use App\Models\Brand;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Builder;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\File;
 use Intervention\Image\Facades\Image;
 use Illuminate\Support\Str;
 
@@ -45,6 +46,56 @@ class AdminController extends Controller
         $brand->image = $file_name;
         $brand->save();
         return redirect()->route('admin.brands')->with('status', 'Brand has been added successfully!');
+    }
+
+    public function brand_edit($id)
+    {
+        $brand = Brand::find($id);
+        return view('admin.brand-edit', compact('brand'));
+    }
+
+    public function brand_update(Request $request)
+    {
+        // Validate the request
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'slug' => 'required|string|unique:brands,slug,' . $request->id,
+            'image' => 'nullable|mimes:png,jpg,jpeg|max:2048'
+        ]);
+
+        // Find the existing brand
+        $brand = Brand::find($request->id);
+
+        if (!$brand) {
+            return redirect()->route('admin.brands')->with('error', 'Brand not found!');
+        }
+
+        // Update brand details
+        $brand->name = $request->name;
+        $brand->slug = Str::slug($request->name);
+
+        // Handle image upload if present
+        if ($request->hasFile('image')) {
+            // Delete old image if it exists
+            if ($brand->image && File::exists(public_path('uploads/brands/' . $brand->image))) {
+                File::delete(public_path('uploads/brands/' . $brand->image));
+            }
+
+            // Process the new image
+            $image = $request->file('image');
+            $file_name = Carbon::now()->timestamp . '.' . $image->extension();
+
+            // Save the image and generate thumbnails
+            $this->GenerateBrandThumbnailsImage($image, $file_name);
+
+            $brand->image = $file_name;
+        }
+
+        // Save the brand
+        $brand->save();
+
+        // Redirect back with success message
+        return redirect()->route('admin.brands')->with('status', 'Brand has been updated successfully!');
     }
 
     public function GenerateBrandThumbnailsImage($image, $imageName)
