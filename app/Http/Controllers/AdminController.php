@@ -121,8 +121,8 @@ class AdminController extends Controller
 
     public function categories()
     {
-        $categories = Category::orderBy('id','DESC')->paginate(10);
-        return view('admin.categories',compact('categories'));
+        $categories = Category::orderBy('id', 'DESC')->paginate(10);
+        return view('admin.categories', compact('categories'));
     }
 
     public function category_add()
@@ -157,5 +157,55 @@ class AdminController extends Controller
         $img->resize(124, 124, function ($constraint) {
             $constraint->aspectRatio();
         })->save($destinationPath . '/' . $imageName);
+    }
+
+    public function category_edit($id)
+    {
+        $category = Category::find($id);
+        return view('admin.category-edit', compact('category'));
+    }
+
+    public function category_update(Request $request)
+    {
+        // Validate the request
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'slug' => 'required|string|unique:categories,slug,' . $request->id,
+            'image' => 'nullable|mimes:png,jpg,jpeg|max:2048'
+        ]);
+
+        // Find the existing category
+        $category = Category::find($request->id);
+
+        if (!$category) {
+            return redirect()->route('admin.categories')->with('error', 'Category not found!');
+        }
+
+        // Update category details
+        $category->name = $request->name;
+        $category->slug = Str::slug($request->name);
+
+        // Handle image upload if present
+        if ($request->hasFile('image')) {
+            // Delete old image if it exists
+            if ($category->image && File::exists(public_path('uploads/categories/' . $category->image))) {
+                File::delete(public_path('uploads/categories/' . $category->image));
+            }
+
+            // Process the new image
+            $image = $request->file('image');
+            $file_name = Carbon::now()->timestamp . '.' . $image->extension();
+
+            // Save the image and generate thumbnails
+            $this->GenerateCategoryThumbnailsImage($image, $file_name);
+
+            $category->image = $file_name;
+        }
+
+        // Save the category
+        $category->save();
+
+        // Redirect back with success message
+        return redirect()->route('admin.categories')->with('status', 'Category has been updated successfully!');
     }
 }
