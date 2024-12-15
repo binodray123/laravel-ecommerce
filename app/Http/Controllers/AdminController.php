@@ -6,7 +6,6 @@ use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Http\Request;
-use Illuminate\Database\Eloquent\Builder;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\File;
 use Intervention\Image\Facades\Image;
@@ -400,5 +399,34 @@ class AdminController extends Controller
         $product->save();
 
         return redirect()->route('admin.products')->with('status', 'Product has been updated successfully!');
+    }
+
+    public function product_delete($id)
+    {
+        // Find the product by ID
+        $product = Product::findOrFail($id);
+
+        $uploadPath = public_path('uploads/products');
+
+        // Delete the main product image if it exists
+        if ($product->image && File::exists($uploadPath . '/' . $product->image)) {
+            File::delete($uploadPath . '/' . $product->image);
+        }
+
+        // Delete the gallery images if they exist
+        if ($product->images) {
+            $galleryImages = explode(',', $product->images);
+            foreach ($galleryImages as $image) {
+                if (File::exists($uploadPath . '/' . $image)) {
+                    File::delete($uploadPath . '/' . $image);
+                }
+            }
+        }
+
+        // Delete the product from the database
+        $product->delete();
+
+        // Redirect with a success message
+        return redirect()->route('admin.products')->with('status', 'Product has been deleted successfully!');
     }
 }
