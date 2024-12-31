@@ -4,10 +4,8 @@
     <div class="mb-4 pb-4"></div>
     <section class="shop-checkout container">
         <h2 class="page-title">Wishlist</h2>
-        @if(session('status'))
-        <div class="alert alert-success">
-            {{ session('status') }}
-        </div>
+        @if (Session::has('status'))
+        <p class="alert alert-success">{{Session::get('status')}}</p>
         @endif
         <div class="shopping-cart">
             @if(Cart::instance('wishlist')->content()->count()>0)
