@@ -1,6 +1,14 @@
 @extends('layouts.app')
 @section('content')
+<style>
+    .text-danger {
+        color: #e5473a !important;
+    }
 
+    .text-success {
+        color: #2fa904 !important;
+    }
+</style>
 <main class="pt-90">
     <div class="mb-4 pb-4"></div>
     <section class="shop-checkout container">
@@ -98,19 +106,61 @@
                     </tbody>
                 </table>
                 <div class="cart-table-footer">
-                    <input class="form-control" type="text" name="coupon_code" placeholder="Coupon Code">
-                    <input class="btn-link fw-medium position-absolute top-0 end-0 h-100 px-4" type="submit" value="APPLY COUPON">
+                    <form action="{{route('cart.coupon.apply')}}" method="post">
+                        @csrf
+                        <input class="form-control" type="text" name="coupon_code" placeholder="Coupon Code" value="@if (Session::has('coupon')){{Session::get('coupon')['code']}} Applied!
+
+                        @endif">
+                        <input class="btn-link fw-medium position-absolute top-0 end-0 h-100 px-4" type="submit" value="APPLY COUPON">
+                    </form>
                     <form method="POST" action="{{route('cart.empty')}}" class="position-relative bg-body">
                         @csrf
                         @method('DELETE')
                         <button class="btn btn-light" type="submit">CLEAR CART</button>
                     </form>
                 </div>
+                <div>
+                    @if (Session::has('success'))
+                    <p class="text-success">{{Session::get('success')}}</p>
+                    @elseif (Session::has('error'))
+                    <p class="text-danger">{{Session::get('error')}}</p>
+                    @endif
+                </div>
             </div>
             <div class="shopping-cart__totals-wrapper">
                 <div class="sticky-content">
                     <div class="shopping-cart__totals">
                         <h3>Cart Totals</h3>
+                        @if (Session::has('discounts'))
+                        <table class="cart-totals">
+                            <tbody>
+                                <tr>
+                                    <th>Subtotal</th>
+                                    <td>${{Cart::instance('cart')->subtotal()}}</td>
+                                </tr>
+                                <tr>
+                                    <th>Discount {{Session::get('coupon')['code']}}</th>
+                                    <td>${{Session::get('discounts')['discount']}}</td>
+                                </tr>
+                                <tr>
+                                    <th>Subtotal</th>
+                                    <td>${{Session::get('discounts')['subtotal']}}</td>
+                                </tr>
+                                <tr>
+                                    <th>SHIPPING</th>
+                                    <td class="text-right">Free</td>
+                                </tr>
+                                <tr>
+                                    <th>VAT</th>
+                                    <td>${{Session::get('discounts')['tax']}}</td>
+                                </tr>
+                                <tr class="cart-total">
+                                    <th>Total</th>
+                                    <td>${{Session::get('discounts')['total']}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        @else
                         <table class="cart-totals">
                             <tbody>
                                 <tr>
@@ -131,6 +181,7 @@
                                 </tr>
                             </tbody>
                         </table>
+                        @endif
                     </div>
                     <div class="mobile_fixed-btn_wrapper">
                         <div class="button-wrapper container">
