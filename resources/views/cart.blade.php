@@ -8,6 +8,26 @@
     .text-success {
         color: #2fa904 !important;
     }
+
+    .btn-link {
+        /* padding: 8px;
+        background-color: #ccc;
+        border: solid 1px #ccc;
+        margin-top: 10px; */
+        padding: 16px;
+        background-color: #e4e4e4;
+        border: solid 1px #e4e4e4;
+        margin-top: -60px;
+        margin-left: 214px;
+    }
+
+    .btn-link-re {
+        padding: 16px;
+        background-color: #e4e4e4;
+        border: solid 1px #e4e4e4;
+        margin-top: -60px;
+        margin-left: 198px;
+    }
 </style>
 <main class="pt-90">
     <div class="mb-4 pb-4"></div>
@@ -106,18 +126,29 @@
                     </tbody>
                 </table>
                 <div class="cart-table-footer">
+                    @if (!Session::has('coupon'))
                     <form action="{{route('cart.coupon.apply')}}" method="post">
                         @csrf
+                        <input class="form-control" type="text" name="coupon_code" placeholder="Coupon Code" value="">
+                        <input class="btn-link fw-medium position-absolute top-1 end-1 h-10 px-4" type="submit" value="APPLY COUPON">
+                    </form>
+                    @else
+
+                    <form action="{{route('cart.coupon.remove')}}" method="post">
+                        @csrf
+                        @method('DELETE')
                         <input class="form-control" type="text" name="coupon_code" placeholder="Coupon Code" value="@if (Session::has('coupon')){{Session::get('coupon')['code']}} Applied!
 
                         @endif">
-                        <input class="btn-link fw-medium position-absolute top-0 end-0 h-100 px-4" type="submit" value="APPLY COUPON">
+                        <input class="btn-link-re fw-medium position-absolute top-1 end-1 h-10 px-4" type="submit" value="REMOVE COUPON">
                     </form>
+                    @endif
                     <form method="POST" action="{{route('cart.empty')}}" class="position-relative bg-body">
                         @csrf
                         @method('DELETE')
                         <button class="btn btn-light" type="submit">CLEAR CART</button>
                     </form>
+
                 </div>
                 <div>
                     @if (Session::has('success'))
