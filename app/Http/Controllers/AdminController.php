@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Brand;
 use App\Models\Category;
+use App\Models\Contact;
 use App\Models\Coupon;
 use App\Models\Order;
 use App\Models\OrderItem;
@@ -23,7 +24,7 @@ class AdminController extends Controller
     public function index()
     {
         $orders = Order::orderBy('created_at', 'DESC')->get()->take(10);
-        $dashboardDatas = DB::select("Select sum(total) As TotalAmount, 
+        $dashboardDatas = DB::select("Select sum(total) As TotalAmount,
                           sum(if(status='ordered',total,0)) As TotalOrderedAmount,
                           sum(if(status='delivered',total,0)) As TotalDeliveredAmount,
                           sum(if(status='canceled',total,0)) As TotalCanceledAmount,
@@ -34,30 +35,30 @@ class AdminController extends Controller
                            From Orders");
 
         $monthlyDatas = DB::select("
-                           SELECT 
-                               M.id AS MonthNo, 
+                           SELECT
+                               M.id AS MonthNo,
                                M.name AS MonthName,
                                IFNULL(D.TotalAmount, 0) AS TotalAmount,
                                IFNULL(D.TotalOrderedAmount, 0) AS TotalOrderedAmount,
                                IFNULL(D.TotalDeliveredAmount, 0) AS TotalDeliveredAmount,
                                IFNULL(D.TotalCanceledAmount, 0) AS TotalCanceledAmount
-                           FROM 
+                           FROM
                                month_names M
                            LEFT JOIN (
-                               SELECT 
+                               SELECT
                                    DATE_FORMAT(created_at, '%b') AS MonthName,
                                    MONTH(created_at) AS MonthNo,
                                    SUM(total) AS TotalAmount,
                                    SUM(IF(status='ordered', total, 0)) AS TotalOrderedAmount,
                                    SUM(IF(status='delivered', total, 0)) AS TotalDeliveredAmount,
                                    SUM(IF(status='canceled', total, 0)) AS TotalCanceledAmount
-                               FROM 
+                               FROM
                                    orders
-                               WHERE 
+                               WHERE
                                    YEAR(created_at) = YEAR(NOW())
-                               GROUP BY 
+                               GROUP BY
                                    YEAR(created_at), MONTH(created_at), DATE_FORMAT(created_at, '%b')
-                               ORDER BY 
+                               ORDER BY
                                    MONTH(created_at)
                            ) D ON D.MonthNo = M.id
                        ");
@@ -690,5 +691,18 @@ class AdminController extends Controller
         }
         $slide->delete();
         return redirect()->route('admin.slides')->with("status", "Slide has been deleted successfully!");
+    }
+
+    public function contacts()
+    {
+        $contacts = Contact::orderBy('created_at', 'DESC')->paginate(10);
+        return view('admin.contacts', compact('contacts'));
+    }
+
+    public function contact_delete($id)
+    {
+        $contact = Contact::find($id);
+        $contact->delete();
+        return redirect()->route('admin.contacts')->with('status', 'Contact deleted successfully!');
     }
 }
