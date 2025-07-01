@@ -272,7 +272,7 @@
 
             <div class="logo">
                 <a href="{{ route('home.index') }}">
-                    <img src="{{ asset('assets/images/logo.png') }}" alt="Uomo" class="logo__image d-block" />
+                    <img src="{{ asset('assets/images/logos.png') }}" alt="Uomo" class="logo__image d-block" />
                 </a>
             </div>
 
@@ -392,7 +392,7 @@
             <div class="header-desk header-desk_type_1">
                 <div class="logo">
                     <a href="{{ route('home.index') }}">
-                        <img src="{{ asset('assets/images/logo.png') }}" alt="Uomo" class="logo__image d-block" />
+                        <img src="{{ asset('assets/images/logos.png') }}" alt="Uomo" class="logo__image d-block" />
                     </a>
                 </div>
 
@@ -432,7 +432,7 @@
                             <form action="#" method="GET" class="search-field container">
                                 <p class="text-uppercase text-secondary fw-medium mb-4">What are you looking for?</p>
                                 <div class="position-relative">
-                                    <input class="search-field__input search-popup__input w-100 fw-medium" type="text"
+                                    <input class="search-field__input search-popup__input w-100 fw-medium" id="search-input" type="text"
                                         name="search-keyword" placeholder="Search products" />
                                     <button class="btn-icon search-popup__submit" type="submit">
                                         <svg class="d-block" width="20" height="20" viewBox="0 0 20 20" fill="none"
@@ -445,15 +445,8 @@
 
                                 <div class="search-popup__results">
                                     <div class="sub-menu search-suggestion">
-                                        <h6 class="sub-menu__title fs-base">Quicklinks</h6>
-                                        <ul class="sub-menu__list list-unstyled">
-                                            <li class="sub-menu__item"><a href="shop2.html" class="menu-link menu-link_us-s">New Arrivals</a>
-                                            </li>
-                                            <li class="sub-menu__item"><a href="#" class="menu-link menu-link_us-s">Dresses</a></li>
-                                            <li class="sub-menu__item"><a href="shop3.html" class="menu-link menu-link_us-s">Accessories</a>
-                                            </li>
-                                            <li class="sub-menu__item"><a href="#" class="menu-link menu-link_us-s">Footwear</a></li>
-                                            <li class="sub-menu__item"><a href="#" class="menu-link menu-link_us-s">Sweatshirt</a></li>
+                                        <ul id="box-content-search">
+
                                         </ul>
                                     </div>
 
@@ -520,7 +513,7 @@
                 <div class="footer-column footer-store-info col-12 mb-4 mb-lg-0">
                     <div class="logo">
                         <a href="{{ route('home.index') }}">
-                            <img src="{{ asset('assets/images/logo.png') }}" alt="SurfsideMedia" class="logo__image d-block" />
+                            <img src="{{ asset('assets/images/logos.png') }}" alt="SurfsideMedia" class="logo__image d-block" />
                         </a>
                     </div>
                     <p class="footer-address">123 Beach Avenue, Surfside City, CA 00000</p>
@@ -678,6 +671,59 @@
     <script src="{{ asset('js/sweetalert.min.js') }}"></script>
     <script src="{{ asset('assets/js/plugins/swiper.min.js') }}"></script>
     <script src="{{ asset('assets/js/plugins/countdown.js') }}"></script>
+    <script>
+        $(function() {
+                    $("#search-input").on("keyup", function() {
+                            var searchQuery = $(this).val();
+                            if (searchQuery.length > 2) {
+                                $.ajax({
+                                        type: "GET",
+                                        url: "{{route('home.search')}}",
+                                        data: {
+                                            query: searchQuery
+                                        },
+                                        success: function(data) {
+                                            $("#box-content-search").html('');
+                                            $.each(data, function(index, item) {
+                                                    var url = "{{route('shop.product.detail',['product_slug'=>'product_slug_pls'])}}";
+                                                    var link = url.replace('product_slug_pls', item.slug);
+
+                                                    $("#box-content-search").append(' <
+                                                        li >
+                                                        <
+                                                        ul >
+                                                        <
+                                                        li class = "product-item gap14 mb-10" >
+                                                        <
+                                                        div class = "image no-bg" >
+                                                        <
+                                                        img src = "product.jp"
+                                                        alt = "" >
+                                                        <
+                                                        /div> <
+                                                        div class = "flex items-center justify-between gap20 flex-grow" >
+                                                        <
+                                                        div class = "name" >
+                                                        <
+                                                        a href = "#"
+                                                        class = "body-text" > Product Name < /a> < /
+                                                        div > <
+                                                        /div> < /
+                                                        li > <
+                                                        li class = "mb-10" >
+                                                        <
+                                                        div class = "divider" > < /div> < /
+                                                        li > <
+                                                        /ul> < /
+                                                        li >
+                                                        ');
+                                                    });
+                                            }
+                                        });
+                                }
+                            });
+                    });
+    </script>
     <script src="{{ asset('assets/js/theme.js') }}"></script>
     @stack("scripts")
 </body>

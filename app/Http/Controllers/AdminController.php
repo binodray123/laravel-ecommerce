@@ -582,10 +582,24 @@ class AdminController extends Controller
     {
         $order = Order::find($request->order_id);
         $order->status = $request->order_status;
-        if ($request->order_status == 'delivered') {
-            $order->delivered_date = Carbon::now();
-        } elseif ($request->order_status == 'canceled') {
-            $order->canceled_date = Carbon::now();
+        // if ($request->order_status == 'delivered') {
+        //     $order->delivered_date = Carbon::now();
+        // } elseif ($request->order_status == 'canceled') {
+        //     $order->canceled_date = Carbon::now();
+        // }
+        switch ($request->order_status) {
+            case 'shipped':
+                $order->shipped_date = Carbon::now();
+                break;
+            case 'out_for_delivery':
+                $order->out_for_delivery_date = Carbon::now();
+                break;
+            case 'delivered':
+                $order->delivered_date = Carbon::now();
+                break;
+            case 'canceled':
+                $order->canceled_date = Carbon::now();
+                break;
         }
         $order->save();
 
@@ -704,5 +718,50 @@ class AdminController extends Controller
         $contact = Contact::find($id);
         $contact->delete();
         return redirect()->route('admin.contacts')->with('status', 'Contact deleted successfully!');
+    } // End Method
+
+    // Order Tracking Method Start From Here....
+    public function index1()
+    {
+        $orders = Order::with('user')->latest()->get();
+        return view('admin.orders.index', compact('orders'));
     }
+
+    public function show(Order $order)
+    {
+        $scans = $order->scans()->orderBy('scan_time', 'desc')->get();
+        return view('admin.orders.track', compact('order', 'scans'));
+    }
+
+    public function store(Request $request, Order $order)
+    {
+        $request->validate([
+            'status' => 'required|string|max:255',
+            'location' => 'nullable|string|max:255',
+            'state' => 'nullable|string|max:255',
+            'scan_time' => 'required|date',
+        ]);
+
+        // Insert tracking scan
+        $order->scans()->create([
+            'status' => $request->status,
+            'location' => $request->location,
+            'state' => $request->state,
+            'scan_time' => $request->scan_time,
+        ]);
+
+        // Update order status
+        $order->status = $request->order_status;
+        if ($request->order_status == 'delivered') {
+            $order->delivered_date = Carbon::now();
+        } elseif ($request->order_status == 'canceled') {
+            $order->canceled_date = Carbon::now();
+        }
+        $order->save(); // OR: $order->update(['status' => $request->status]);
+
+        return redirect()->back()->with('success', 'Tracking update added.');
+    }
+
+
+    //End Method
 }

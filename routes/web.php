@@ -9,6 +9,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\WishlistController;
 use App\Http\Middleware\AuthAdmin;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\OrderTrackingController;
 use Surfsidemedia\Shoppingcart\Facades\Cart;
 
 /*
@@ -51,11 +52,15 @@ Route::post('/wishlist/move-to-cart/{rowId}', [WishlistController::class, 'move_
 Route::get('/contact-us', [HomeController::class, 'contact'])->name('home.contact');
 Route::post('/contact/store', [HomeController::class, 'contact_store'])->name('home.contact.store');
 
+Route::get('/search', [HomeController::class, 'search'])->name('home.search');
+
 Route::middleware(['auth'])->group(function () {
     Route::get('/account-dashboard', [UserController::class, 'index'])->name('user.index');
     Route::get('/account-orders', [UserController::class, 'orders'])->name('user.orders');
     Route::get('/account-order/{order_id}/details', [UserController::class, 'order_details'])->name('user.order.details');
     Route::put('/account-order/cancel-order', [UserController::class, 'order_cancel'])->name('user.order.cancel');
+
+    Route::get('/account-order/{orderId}/track', [OrderTrackingController::class, 'track'])->name('user.order.track');
 });
 
 Route::middleware('auth', AuthAdmin::class)->group(function () {
@@ -100,4 +105,8 @@ Route::middleware('auth', AuthAdmin::class)->group(function () {
 
     Route::get('/admin/contact', [AdminController::class, 'contacts'])->name('admin.contacts');
     Route::delete('/admin/contact/delete/{id}', [AdminController::class, 'contact_delete'])->name('admin.contact.delete');
+
+    Route::get('/orders', [AdminController::class, 'index1'])->name('admin.orderstest');
+    Route::get('/orders/{order}/track', [AdminController::class, 'show'])->name('admin.orders.track');
+    Route::post('/orders/{order}/track', [AdminController::class, 'store'])->name('admin.orders.track.store');
 });

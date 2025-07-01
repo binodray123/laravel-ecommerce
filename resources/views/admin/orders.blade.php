@@ -67,6 +67,10 @@
                                     <span class="badge bg-success">Delivered</span>
                                     @elseif($order->status == 'canceled')
                                     <span class="badge bg-danger">Canceled</span>
+                                    @elseif($order->status == 'shipped')
+                                    <span class="badge bg-primary">Shipped</span>
+                                    @elseif($order->status == 'out_for_delivery')
+                                    <span class="badge bg-info text-dark">Out for Delivery</span>
                                     @else
                                     <span class="badge bg-warning">Ordered</span>
                                     @endif

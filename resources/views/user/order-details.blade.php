@@ -178,6 +178,10 @@
                                     <span class="badge bg-success">Delivered</span>
                                     @elseif ($order->status == 'canceled')
                                     <span class="badge bg-danger">Canceled</span>
+                                    @elseif($order->status == 'shipped')
+                                    <span class="badge bg-primary">Shipped</span>
+                                    @elseif($order->status == 'out_for_delivery')
+                                    <span class="badge bg-info text-dark">Out for Delivery</span>
                                     @else
                                     <span class="badge bg-warning">Ordered</span>
                                     @endif
@@ -205,7 +209,7 @@
                                     <th class="text-center">Brand</th>
                                     <th class="text-center">Options</th>
                                     <th class="text-center">Return Status</th>
-                                    <th class="text-center">Action</th>
+                                    <th class="text-center">Order Tracking</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -230,9 +234,13 @@
                                     <td class="text-center">{{ $item->rstatus == 0 ? "No":"Yes" }}</td>
                                     <td class="text-center">
                                         <div class="list-icon-function view-icon">
-                                            <div class="item eye">
-                                                <i class="icon-eye"></i>
-                                            </div>
+                                            <a href="{{ route('user.order.track',['orderId'=>$order->id]) }}">
+                                                <div class="list-icon-function view-icon">
+                                                    <div class="item eye">
+                                                        <i class="fa fa-eye"></i>
+                                                    </div>
+                                                </div>
+                                            </a>
                                         </div>
                                     </td>
                                 </tr>

@@ -59,8 +59,12 @@
                             <span class="badge bg-success">Delivered</span>
                             @elseif ($order->status == 'canceled')
                             <span class="badge bg-danger">Canceled</span>
+                            @elseif ($order->status == 'shipped')
+                            <span class="badge bg-primary">Shipped</span>
+                            @elseif ($order->status == 'out_for_delivery')
+                            <span class="badge bg-info text-dark">Out for Delivery</span>
                             @else
-                            <span class="badge bg-warning">Ordered</span>
+                            <span class="badge bg-warning text-dark">Ordered</span>
                             @endif
                         </td>
                     </tr>
@@ -189,6 +193,8 @@
                         <div class="select">
                             <select name="order_status" id="order_status">
                                 <option value="ordered" {{$order->status == 'ordered' ? "selected":""}}>Ordered</option>
+                                <option value="shipped" {{$order->status == 'shipped' ? "selected":""}}>Shipped</option>
+                                <option value="out_for_delivery" {{$order->status == 'out_for_delivery' ? "selected":""}}>Out for Delivery</option>
                                 <option value="delivered" {{$order->status == 'delivered' ? "selected":""}}>Delivered</option>
                                 <option value="canceled" {{$order->status == 'canceled' ? "selected":""}}>Canceled</option>
                             </select>
