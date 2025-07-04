@@ -29,7 +29,7 @@
         </div>
         <form name="checkout-form" action="{{route('cart.place.an.order')}}" method="POST">
             @csrf
-            @method('PUT')
+            @method('POST')
             <div class="checkout-form">
                 <div class="billing-info__wrapper">
                     <div class="row">
@@ -150,7 +150,7 @@
                                             {{ $item->name }} x {{ $item->qty }}
                                         </td>
                                         <td align="right">
-                                            ${{ $item->subtotal }}
+                                            Rs.{{ $item->subtotal }}
                                         </td>
                                     </tr>
                                     @endforeach
@@ -161,15 +161,15 @@
                                 <tbody>
                                     <tr>
                                         <th>Subtotal</th>
-                                        <td class="text-right">${{Cart::instance('cart')->subtotal()}}</td>
+                                        <td class="text-right">Rs.{{Cart::instance('cart')->subtotal()}}</td>
                                     </tr>
                                     <tr>
                                         <th>Discount {{Session::get('coupon')['code']}}</th>
-                                        <td class="text-right">${{Session::get('discounts')['discount']}}</td>
+                                        <td class="text-right">Rs.{{Session::get('discounts')['discount']}}</td>
                                     </tr>
                                     <tr>
                                         <th>Subtotal</th>
-                                        <td class="text-right">${{Session::get('discounts')['subtotal']}}</td>
+                                        <td class="text-right">Rs.{{Session::get('discounts')['subtotal']}}</td>
                                     </tr>
                                     <tr>
                                         <th>SHIPPING</th>
@@ -177,11 +177,11 @@
                                     </tr>
                                     <tr>
                                         <th>VAT</th>
-                                        <td class="text-right">${{Session::get('discounts')['tax']}}</td>
+                                        <td class="text-right">Rs.{{Session::get('discounts')['tax']}}</td>
                                     </tr>
                                     <tr class="cart-total">
                                         <th>Total</th>
-                                        <td class="text-right">${{Session::get('discounts')['total']}}</td>
+                                        <td class="text-right">Rs.{{Session::get('discounts')['total']}}</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -190,7 +190,7 @@
                                 <tbody>
                                     <tr>
                                         <th>SUBTOTAL</th>
-                                        <td class="text-right">${{Cart::instance('cart')->subtotal()}}</td>
+                                        <td class="text-right">Rs.{{Cart::instance('cart')->subtotal()}}</td>
                                     </tr>
                                     <tr>
                                         <th>SHIPPING</th>
@@ -198,11 +198,11 @@
                                     </tr>
                                     <tr>
                                         <th>VAT</th>
-                                        <td class="text-right">${{Cart::instance('cart')->tax()}}</td>
+                                        <td class="text-right">Rs.{{Cart::instance('cart')->tax()}}</td>
                                     </tr>
                                     <tr>
                                         <th>TOTAL</th>
-                                        <td class="text-right">${{Cart::instance('cart')->total()}}</td>
+                                        <td class="text-right">Rs.{{Cart::instance('cart')->total()}}</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -210,23 +210,21 @@
                         </div>
                         <div class="checkout__payment-methods">
                             <div class="form-check">
-                                <input class="form-check-input form-check-input_fill" type="radio" name="mode" id="mode1" value="card">
+                                <input class="form-check-input form-check-input_fill" type="radio" name="mode" id="mode1" value="card" {{ old('mode') == 'card' ? 'checked' : '' }}>
                                 <label class="form-check-label" for="checkout_payment_method_2">
                                     Debit or Credit Card
                                 </label>
                             </div>
+
                             <div class="form-check">
-                                <input class="form-check-input form-check-input_fill" type="radio" name="mode" id="mode2" value="paypal">
-                                <label class="form-check-label" for="checkout_payment_method_4">
-                                    Paypal
-                                </label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input form-check-input_fill" type="radio" name="mode" id="mode3" value="cod">
+                                <input class="form-check-input form-check-input_fill" type="radio" name="mode" id="mode3" value="cod" {{ old('mode') == 'cod' ? 'checked' : '' }}>
                                 <label class="form-check-label" for="checkout_payment_method_3">
                                     Cash on delivery
                                 </label>
                             </div>
+                            @error('mode')
+                            <span class="text-danger d-block mt-2">{{ $message }}</span>
+                            @enderror
                             <div class="policy-text">
                                 Your personal data will be used to process your order, support your experience throughout this
                                 website, and for other purposes described in our <a href="terms.html" target="_blank">privacy

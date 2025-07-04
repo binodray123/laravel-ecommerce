@@ -582,11 +582,7 @@ class AdminController extends Controller
     {
         $order = Order::find($request->order_id);
         $order->status = $request->order_status;
-        // if ($request->order_status == 'delivered') {
-        //     $order->delivered_date = Carbon::now();
-        // } elseif ($request->order_status == 'canceled') {
-        //     $order->canceled_date = Carbon::now();
-        // }
+        
         switch ($request->order_status) {
             case 'shipped':
                 $order->shipped_date = Carbon::now();

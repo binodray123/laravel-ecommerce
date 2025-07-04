@@ -1,6 +1,11 @@
 @extends('layouts.app')
 @section('content')
 <main class="pt-90">
+    <main class="py-5 text-center">
+        <h2>🎉 Payment Successful</h2>
+        <p>Your order has been placed successfully.</p>
+        <a href="{{ route('home.index') }}" class="btn btn-success mt-3">Continue Shopping</a>
+    </main>
     <div class="mb-4 pb-4"></div>
     <section class="shop-checkout container">
         <h2 class="page-title">Order Received</h2>
@@ -49,7 +54,7 @@
                 </div>
                 <div class="order-info__item">
                     <label>Total</label>
-                    <span>${{ $order->total }}</span>
+                    <span>Rs.{{ $order->total }}</span>
                 </div>
                 <div class="order-info__item">
                     <label>Paymetn Method</label>
@@ -75,7 +80,7 @@
                                     {{ $item->product->name }} x {{ $item->quantity }}
                                 </td>
                                 <td>
-                                    ${{ $item->price }}
+                                    Rs.{{ $item->price }}
                                 </td>
                             </tr>
                         </tbody>
@@ -84,11 +89,11 @@
                         <tbody>
                             <tr>
                                 <th>SUBTOTAL</th>
-                                <td>${{ $order->subtotal }}</td>
+                                <td>Rs.{{ $order->subtotal }}</td>
                             </tr>
                             <tr>
                                 <th>DISCOUNT</th>
-                                <td>${{ $order->discount }}</td>
+                                <td>Rs.{{ $order->discount }}</td>
                             </tr>
                             <tr>
                                 <th>SHIPPING</th>
@@ -96,11 +101,11 @@
                             </tr>
                             <tr>
                                 <th>VAT</th>
-                                <td>${{ $order->tax }}</td>
+                                <td>Rs.{{ $order->tax }}</td>
                             </tr>
                             <tr>
                                 <th>TOTAL</th>
-                                <td>${{ $order->total }}</td>
+                                <td>Rs.{{ $order->total }}</td>
                             </tr>
                         </tbody>
                     </table>

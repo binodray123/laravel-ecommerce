@@ -12,6 +12,9 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Surfsidemedia\Shoppingcart\Facades\Cart;
+use Stripe\Stripe;
+use Stripe\Checkout\Session as StripeSession;
+use Illuminate\Support\Facades\Log;
 
 
 class CartController extends Controller
@@ -122,7 +125,13 @@ class CartController extends Controller
 
     public function place_an_order(Request $request)
     {
-        $user_id = Auth::user()->id;
+
+        $request->validate([
+            'mode' => 'required|in:card,cod',
+        ]);
+
+        $user_id = auth()->id();
+
         $address = Address::where('user_id', $user_id)->where('isdefault', true)->first();
 
         if (!$address) {
@@ -138,6 +147,7 @@ class CartController extends Controller
             ]);
 
             $address = new Address();
+            $address->user_id = $user_id;
             $address->name = $request->name;
             $address->phone = $request->phone;
             $address->zip = $request->zip;
@@ -147,77 +157,115 @@ class CartController extends Controller
             $address->locality = $request->locality;
             $address->landmark = $request->landmark;
             $address->country = 'Nepal';
-            $address->user_id = $user_id;
             $address->isdefault = true;
             $address->save();
+        }
+        if (!$address) {
+            return back()->with('error', 'Shipping address is missing.');
         }
 
         $this->setAmountforCheckout();
 
-        // $order = new Order();
-        // $order->user_id = $user_id;
-        // $order->subtotal = Session::get('checkout')['subtotal'];
-        // $order->discount = Session::get('checkout')['discount'];
-        // $order->tax = Session::get('checkout')['tax'];
-        // $order->total = Session::get('checkout')['total'];
-        // $order->name = $address->name;
-        // $order->phone = $address->phone;
-        // $order->locality = $address->locality;
-        // $order->address = $address->address;
-        // $order->city = $address->city;
-        // $order->state = $address->state;
-        // $order->country = $address->country;
-        // $order->landmark = $address->landmark;
-        // $order->zip = $address->zip;
-        // $order->save();
+        $checkout = Session::get('checkout');
+        if (!$checkout) {
+            return back()->with('error', 'Checkout session expired. Please try again.');
+        }
         $order = new Order();
         $order->user_id = $user_id;
         $order->subtotal = (float) str_replace(',', '', Session::get('checkout')['subtotal']);
         $order->discount = (float) str_replace(',', '', Session::get('checkout')['discount']);
         $order->tax = (float) str_replace(',', '', Session::get('checkout')['tax']);
         $order->total = (float) str_replace(',', '', Session::get('checkout')['total']);
-        $order->name = $address->name;
-        $order->phone = $address->phone;
-        $order->locality = $address->locality;
-        $order->address = $address->address;
-        $order->city = $address->city;
-        $order->state = $address->state;
-        $order->country = $address->country;
-        $order->landmark = $address->landmark;
-        $order->zip = $address->zip;
+        $order->fill($address->only(['name', 'phone', 'locality', 'address', 'city', 'state', 'country', 'landmark', 'zip']));
         $order->save();
 
-
-
         foreach (Cart::instance('cart')->content() as $item) {
-            $orderItem = new OrderItem();
-            $orderItem->product_id = $item->id;
-            $orderItem->order_id = $order->id;
-            $orderItem->price = $item->price;
-            $orderItem->quantity = $item->qty;
-            $orderItem->save();
+            OrderItem::create([
+                'product_id' => $item->id,
+                'order_id' => $order->id,
+                'price' => $item->price,
+                'quantity' => $item->qty,
+            ]);
         }
 
-        if ($request->mode == "card") {
-            //
-        } elseif ($request->mode == "paypal") {
-            //
-        } elseif ($request->mode == "cod") {
-            $transaction = new Transaction();
-            $transaction->user_id = $user_id;
-            $transaction->order_id = $order->id;
-            $transaction->mode = $request->mode;
-            $transaction->status = "pending";
-            $transaction->save();
+        if ($request->mode === "card") {
+            Session::put('stripe_order_id', $order->id);
+            return $this->redirectToStripe($order);
         }
+
+        if ($request->mode === "cod") {
+            Transaction::create([
+                'user_id' => $user_id,
+                'order_id' => $order->id,
+                'mode' => 'cod',
+                'status' => 'pending',
+            ]);
+
+            Cart::instance('cart')->destroy();
+            Session::forget(['checkout', 'coupon', 'discounts']);
+
+            return redirect()->route('home.index');
+        }
+
+        return back()->with('error', 'Invalid payment mode.');
+    }
+
+    // Stripe Integration
+    public function redirectToStripe($order)
+    {
+        Stripe::setApiKey(config('services.stripe.secret'));
+
+        try {
+            $session = StripeSession::create([
+                'payment_method_types' => ['card'],
+                'line_items' => [[
+                    'price_data' => [
+                        'currency' => 'usd',
+                        'product_data' => [
+                            'name' => 'Order #' . $order->id,
+                        ],
+                        'unit_amount' => (int) ($order->total * 100), // Stripe requires cents
+                    ],
+                    'quantity' => 1,
+                ]],
+                'mode' => 'payment',
+                'success_url' => route('payment.success'),
+                'cancel_url' => route('payment.cancel'),
+            ]);
+
+            return redirect($session->url);
+        } catch (\Exception $e) {
+            Log::error('Stripe Checkout Error: ' . $e->getMessage());
+            return back()->with('error', 'Unable to create Stripe session.');
+        }
+    }
+
+    public function paymentSuccess()
+    {
+        $order_id = Session::pull('stripe_order_id');
+        if (!$order_id) return redirect()->route('home.index')->with('error', 'Order session expired.');
+
+        $order = Order::findOrFail($order_id);
+
+        Transaction::create([
+            'user_id' => $order->user_id,
+            'order_id' => $order->id,
+            'mode' => 'card',
+            'status' => 'completed',
+        ]);
 
         Cart::instance('cart')->destroy();
-        Session::forget('checkout');
-        Session::forget('coupon');
-        Session::forget('discounts');
-        Session::put('order_id', $order->id);
-        return redirect()->route('cart.order.confirmation');
+        Session::forget(['checkout', 'coupon', 'discounts']);
+
+        return view('order-confirmation' , compact('order'));
     }
+
+    public function paymentCancel()
+    {
+        return view('payment-cancel');
+    }
+
+    // End Stripe Method
 
     public function setAmountforCheckout()
     {

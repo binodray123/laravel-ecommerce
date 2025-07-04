@@ -154,15 +154,15 @@
                 <tbody>
                     <tr>
                         <th>Subtotal</th>
-                        <td>${{$order->subtotal}}</td>
+                        <td>Rs.{{$order->subtotal}}</td>
                         <th>Tax</th>
-                        <td>${{$order->tax}}</td>
+                        <td>Rs.{{$order->tax}}</td>
                         <th>Discount</th>
-                        <td>${{$order->discount}}</td>
+                        <td>Rs.{{$order->discount}}</td>
                     </tr>
                     <tr>
                         <th>Total</th>
-                        <td>${{$order->total}}</td>
+                        <td>Rs.{{$order->total}}</td>
                         <th>Payment Mode</th>
                         <td>{{$transaction->mode}}</td>
                         <th>Status</th>

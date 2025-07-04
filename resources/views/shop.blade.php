@@ -184,16 +184,16 @@
                     </h5>
                     <div id="accordion-filter-price" class="accordion-collapse collapse show border-0"
                         aria-labelledby="accordion-heading-price" data-bs-parent="#price-filters">
-                        <input class="price-range-slider" type="text" name="price_range" value="" data-slider-min="1"
-                            data-slider-max="500" data-slider-step="5" data-slider-value="[{{$min_price}}, {{$max_price}}]" data-currency="$" />
+                        <input class="price-range-slider" type="text" name="price_range" value="" data-slider-min="100"
+                            data-slider-max="3000" data-slider-step="5" data-slider-value="[{{$min_price}}, {{$max_price}}]" data-currency="Rs." />
                         <div class="price-range__info d-flex align-items-center mt-2">
                             <div class="me-auto">
                                 <span class="text-secondary">Min Price: </span>
-                                <span class="price-range__min">$1</span>
+                                <span class="price-range__min">Rs.100</span>
                             </div>
                             <div>
                                 <span class="text-secondary">Max Price: </span>
-                                <span class="price-range__max">$500</span>
+                                <span class="price-range__max">Rs.3000</span>
                             </div>
                         </div>
                     </div>
@@ -382,9 +382,9 @@
                             <div class="product-card__price d-flex">
                                 <span class="money price">
                                     @if ($product->sale_price)
-                                    <s>${{$product->regular_price}}</s> ${{ $product->sale_price }}
+                                    <s>Rs.{{$product->regular_price}}</s> Rs.{{ $product->sale_price }}
                                     @else
-                                    ${{ $product->regular_price }}
+                                    Rs.{{ $product->regular_price }}
                                     @endif
                                 </span>
                             </div>

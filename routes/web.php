@@ -10,6 +10,7 @@ use App\Http\Controllers\WishlistController;
 use App\Http\Middleware\AuthAdmin;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\OrderTrackingController;
+use App\Http\Controllers\PaymentController;
 use Surfsidemedia\Shoppingcart\Facades\Cart;
 
 /*
@@ -40,8 +41,10 @@ Route::post('/cart/apply-coupon', [CartController::class, 'apply_coupon_code'])-
 Route::delete('/cart/remove-coupon', [CartController::class, 'remove_coupon_code'])->name('cart.coupon.remove');
 
 Route::get('/checkout', [CartController::class, 'checkout'])->name('cart.checkout');
-Route::put('place-an-order', [CartController::class, 'place_an_order'])->name('cart.place.an.order');
+Route::post('place-an-order', [CartController::class, 'place_an_order'])->name('cart.place.an.order');
 Route::get('/order-confirmation', [CartController::class, 'order_confirmation'])->name('cart.order.confirmation');
+Route::get('/payment-success', [CartController::class, 'paymentSuccess'])->name('payment.success');
+Route::get('/payment-cancel', [CartController::class, 'paymentCancel'])->name('payment.cancel');
 
 Route::post('/wishlist/add', [WishlistController::class, 'add_to_wishlist'])->name('wishlist.add');
 Route::get('/wishlist', [WishlistController::class, 'index'])->name('wishlist.index');
@@ -110,3 +113,15 @@ Route::middleware('auth', AuthAdmin::class)->group(function () {
     Route::get('/orders/{order}/track', [AdminController::class, 'show'])->name('admin.orders.track');
     Route::post('/orders/{order}/track', [AdminController::class, 'store'])->name('admin.orders.track.store');
 });
+
+
+// Payment Controller
+
+// Route::get('/payment', [PaymentController::class, 'index'])->name('payment.form');
+// Route::post('/checkout', [PaymentController::class, 'checkout'])->name('payment.checkout');
+// Route::get('/success', function () {
+//     return "Payment Successful!";
+// })->name('payment.success');
+// Route::get('/cancel', function () {
+//     return "Payment Canceled!";
+// })->name('payment.cancel');

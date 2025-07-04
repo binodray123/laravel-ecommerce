@@ -39,7 +39,7 @@
                                 </div>
                             </td>
                             <td>
-                                <span class="shopping-cart__product-price">${{ $item->price }}</span>
+                                <span class="shopping-cart__product-price">Rs.{{ $item->price }}</span>
                             </td>
                             <td>
                                 {{ $item->qty }}
