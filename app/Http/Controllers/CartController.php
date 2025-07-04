@@ -204,7 +204,9 @@ class CartController extends Controller
             Cart::instance('cart')->destroy();
             Session::forget(['checkout', 'coupon', 'discounts']);
 
-            return redirect()->route('home.index');
+            Session::put('order_id', $order->id);
+
+            return redirect()->route('cart.order.confirmation');
         }
 
         return back()->with('error', 'Invalid payment mode.');
