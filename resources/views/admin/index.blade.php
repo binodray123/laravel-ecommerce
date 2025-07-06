@@ -146,7 +146,7 @@
                             </div>
                         </div>
                         <div class="flex items-center gap10">
-                            <h4>${{ $TotalAmount }}</h4>
+                            <h4>Rs.{{ $TotalAmount }}</h4>
                         </div>
                     </div>
                     <div>
@@ -157,7 +157,7 @@
                             </div>
                         </div>
                         <div class="flex items-center gap10">
-                            <h4>${{ $TotalOrderedAmount }}</h4>
+                            <h4>Rs.{{ $TotalOrderedAmount }}</h4>
                         </div>
                     </div>
                     <div>
@@ -168,7 +168,7 @@
                             </div>
                         </div>
                         <div class="flex items-center gap10">
-                            <h4>${{ $TotalDeliveredAmount }}</h4>
+                            <h4>Rs.{{ $TotalDeliveredAmount }}</h4>
                         </div>
                     </div>
                     <div>
@@ -179,11 +179,12 @@
                             </div>
                         </div>
                         <div class="flex items-center gap10">
-                            <h4>${{ $TotalCanceledAmount }}</h4>
+                            <h4>Rs.{{ $TotalCanceledAmount }}</h4>
                         </div>
                     </div>
                 </div>
                 <div id="line-chart-8"></div>
+
             </div>
 
         </div>
@@ -262,15 +263,15 @@
 </div>
 @endsection
 @push('scripts')
-<script>
-    (function($) {
+ <script>
+        (function ($) {
 
-        var tfLineChart = (function() {
+            var tfLineChart = (function () {
 
-            var chartBar = function() {
+                var chartBar = function () {
 
-                var options = {
-                    series: [{
+                    var options = {
+                        series: [{
                             name: 'Total',
                             data: [0.00, 0.00, 0.00, 0.00, 0.00, 273.22, 208.12, 0.00, 0.00, 0.00, 0.00, 0.00]
                         }, {
@@ -283,83 +284,82 @@
                         }, {
                             name: 'Canceled',
                             data: [0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00]
-                        }
-                    ],
-                    chart: {
-                        type: 'bar',
-                        height: 325,
-                        toolbar: {
-                            show: false,
-                        },
-                    },
-                    plotOptions: {
-                        bar: {
-                            horizontal: false,
-                            columnWidth: '10px',
-                            endingShape: 'rounded'
-                        },
-                    },
-                    dataLabels: {
-                        enabled: false
-                    },
-                    legend: {
-                        show: false,
-                    },
-                    colors: ['#2377FC', '#FFA500', '#078407', '#FF0000'],
-                    stroke: {
-                        show: false,
-                    },
-                    xaxis: {
-                        labels: {
-                            style: {
-                                colors: '#212529',
+                        }],
+                        chart: {
+                            type: 'bar',
+                            height: 325,
+                            toolbar: {
+                                show: false,
                             },
                         },
-                        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-                    },
-                    yaxis: {
-                        show: false,
-                    },
-                    fill: {
-                        opacity: 1
-                    },
-                    tooltip: {
-                        y: {
-                            formatter: function(val) {
-                                return "$ " + val + ""
+                        plotOptions: {
+                            bar: {
+                                horizontal: false,
+                                columnWidth: '10px',
+                                endingShape: 'rounded'
+                            },
+                        },
+                        dataLabels: {
+                            enabled: false
+                        },
+                        legend: {
+                            show: false,
+                        },
+                        colors: ['#2377FC', '#FFA500', '#078407', '#FF0000'],
+                        stroke: {
+                            show: false,
+                        },
+                        xaxis: {
+                            labels: {
+                                style: {
+                                    colors: '#212529',
+                                },
+                            },
+                            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                        },
+                        yaxis: {
+                            show: false,
+                        },
+                        fill: {
+                            opacity: 1
+                        },
+                        tooltip: {
+                            y: {
+                                formatter: function (val) {
+                                    return "$ " + val + ""
+                                }
                             }
                         }
+                    };
+
+                    chart = new ApexCharts(
+                        document.querySelector("#line-chart-8"),
+                        options
+                    );
+                    if ($("#line-chart-8").length > 0) {
+                        chart.render();
                     }
                 };
 
-                chart = new ApexCharts(
-                    document.querySelector("#line-chart-8"),
-                    options
-                );
-                if ($("#line-chart-8").length > 0) {
-                    chart.render();
-                }
-            };
+                /* Function ============ */
+                return {
+                    init: function () { },
 
-            /* Function ============ */
-            return {
-                init: function() {},
+                    load: function () {
+                        chartBar();
+                    },
+                    resize: function () { },
+                };
+            })();
 
-                load: function() {
-                    chartBar();
-                },
-                resize: function() {},
-            };
-        })();
+            jQuery(document).ready(function () { });
 
-        jQuery(document).ready(function() {});
+            jQuery(window).on("load", function () {
+                tfLineChart.load();
+            });
 
-        jQuery(window).on("load", function() {
-            tfLineChart.load();
-        });
-
-        jQuery(window).on("resize", function() {});
-    })(jQuery);
-</script>
+            jQuery(window).on("resize", function () { });
+        })(jQuery);
+    </script>
 
 @endpush

@@ -62,12 +62,7 @@
             </div>
             <!-- Google Maps Embed -->
             <div class="ratio ratio-16x9">
-                <iframe
-                    src="https://www.google.com/maps/embed?pb=!1m18!..."
-                    style="border:0;"
-                    allowfullscreen=""
-                    loading="lazy">
-                </iframe>
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2949.280348515156!2d85.32852187453419!3d27.667376427254993!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39eb195c5094c7e3%3A0xa14e4acd90c5395!2sBaAma%20Consultant%20Service%20Pvt.%20Ltd.!5e1!3m2!1sen!2snp!4v1751799607293!5m2!1sen!2snp" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
             </div>
         </div>
     </section>

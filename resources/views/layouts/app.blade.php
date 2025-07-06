@@ -260,6 +260,33 @@
         .logo__image {
             max-width: 220px;
         }
+
+        .product-item {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 15px;
+            transition: all 0.3s ease;
+            padding-right: 5px;
+        }
+        .product-item .image{
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 50px;
+            height: 50px;
+            flex-shrink: 0;
+            padding: 5px;
+            border-radius: 10px;
+            background: #eff4f8;
+        }
+        #box-content-search li{
+            list-style: none;
+        }
+        #box-content-search .product-item{
+            margin-bottom: 10px;
+        }
     </style>
     <div class="header-mobile header_sticky">
         <div class="container d-flex align-items-center h-100">
@@ -444,13 +471,9 @@
                                 </div>
 
                                 <div class="search-popup__results">
-                                    <div class="sub-menu search-suggestion">
-                                        <ul id="box-content-search">
+                                    <ul id="box-content-search">
 
-                                        </ul>
-                                    </div>
-
-                                    <div class="search-result row row-cols-5"></div>
+                                    </ul>
                                 </div>
                             </form>
                         </div>
@@ -665,64 +688,59 @@
     <div id="scrollTop" class="visually-hidden end-0"></div>
     <div class="page-overlay"></div>
 
-    <script src="{{ asset('assets/js/plugins/jquery.min.js') }}"></script>
-    <script src="{{ asset('assets/js/plugins/bootstrap.bundle.min.js') }}"></script>
-    <script src="{{ asset('assets/js/plugins/bootstrap-slider.min.js') }}"></script>
-    <script src="{{ asset('js/sweetalert.min.js') }}"></script>
-    <script src="{{ asset('assets/js/plugins/swiper.min.js') }}"></script>
-    <script src="{{ asset('assets/js/plugins/countdown.js') }}"></script>
+    <script src="{{asset('assets/js/plugins/jquery.min.js')}}"></script>
+    <script src="{{asset('assets/js/plugins/bootstrap.bundle.min.js')}}"></script>
+    <script src="{{asset('assets/js/plugins/bootstrap-slider.min.js')}}"></script>
+    <script src="{{asset('js/sweetalert.min.js')}}"></script>
+    <script src="{{asset('assets/js/plugins/swiper.min.js')}}"></script>
+    <script src="{{asset('assets/js/plugins/countdown.js')}}"></script>
     <script>
         $(function() {
-                    $("#search-input").on("keyup", function() {
-                            var searchQuery = $(this).val();
-                            if (searchQuery.length > 2) {
-                                $.ajax({
-                                        type: "GET",
-                                        url: "{{route('home.search')}}",
-                                        data: {
-                                            query: searchQuery
-                                        },
-                                        success: function(data) {
-                                            $("#box-content-search").html('');
-                                            $.each(data, function(index, item) {
-                                                    var url = "{{route('shop.product.detail',['product_slug'=>'product_slug_pls'])}}";
-                                                    var link = url.replace('product_slug_pls', item.slug);
+            $("#search-input").on("keyup", function() {
+                var searchQuery = $(this).val();
 
-                                                    $("#box-content-search").append(' <
-                                                        li >
-                                                        <
-                                                        ul >
-                                                        <
-                                                        li class = "product-item gap14 mb-10" >
-                                                        <
-                                                        div class = "image no-bg" >
-                                                        <
-                                                        img src = "product.jp"
-                                                        alt = "" >
-                                                        <
-                                                        /div> <
-                                                        div class = "flex items-center justify-between gap20 flex-grow" >
-                                                        <
-                                                        div class = "name" >
-                                                        <
-                                                        a href = "#"
-                                                        class = "body-text" > Product Name < /a> < /
-                                                        div > <
-                                                        /div> < /
-                                                        li > <
-                                                        li class = "mb-10" >
-                                                        <
-                                                        div class = "divider" > < /div> < /
-                                                        li > <
-                                                        /ul> < /
-                                                        li >
-                                                        ');
-                                                    });
-                                            }
-                                        });
-                                }
+                if (searchQuery.length > 2) {
+                    $.ajax({
+                        type: "GET",
+                        url: "{{ route('home.search') }}",
+                        data: {
+                            query: searchQuery
+                        },
+                        dataType: "json",
+                        success: function(data) {
+                            $("#box-content-search").html(""); // Clear previous results
+
+                            $.each(data, function(index, item) {
+                                let productUrl = "{{ route('shop.product.detail', ['product_slug' => 'product_slug_pls']) }}";
+                                productUrl = productUrl.replace('product_slug_pls', item.slug);
+
+                                const html = `
+                                   <li>
+                                       <ul>
+                                          <li class="product-item gap14 mb-10">
+                                                 <div class="image no-bg">
+                                                     <img src="{{ asset('uploads/products/thumbnails') }}/${item.image}" alt="${item.name}">
+                                                      </div>
+                                                     <div class="flex items-center justify-between gap20 flex-grow">
+                                                           <div class="name">
+                                                           <a href="${productUrl}" class="body-text">${item.name}</a>
+                                                                   </div>
+                                                                  </div>
+                                                                         </li>
+                                                                          <li class="mb-10">
+                                                                 <div class="divider"></div>
+                                                                     </li>
+                                          </ul>
+                                   </li>
+              `;
+
+                                $("#box-content-search").append(html);
                             });
+                        },
                     });
+                }
+            });
+        });
     </script>
     <script src="{{ asset('assets/js/theme.js') }}"></script>
     @stack("scripts")

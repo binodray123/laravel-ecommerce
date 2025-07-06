@@ -582,7 +582,7 @@ class AdminController extends Controller
     {
         $order = Order::find($request->order_id);
         $order->status = $request->order_status;
-        
+
         switch ($request->order_status) {
             case 'shipped':
                 $order->shipped_date = Carbon::now();
@@ -758,6 +758,11 @@ class AdminController extends Controller
         return redirect()->back()->with('success', 'Tracking update added.');
     }
 
-
+    public function search(Request $request)
+    {
+        $query = $request->input('query');
+        $results = Product::where('name', 'LIKE', "%{$query}%")->get()->take(8);
+        return response()->json($results);
+    }
     //End Method
 }

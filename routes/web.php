@@ -113,6 +113,7 @@ Route::middleware('auth', AuthAdmin::class)->group(function () {
     Route::get('/orders', [AdminController::class, 'index1'])->name('admin.orderstest');
     Route::get('/orders/{order}/track', [AdminController::class, 'show'])->name('admin.orders.track');
     Route::post('/orders/{order}/track', [AdminController::class, 'store'])->name('admin.orders.track.store');
+    Route::get('/admin/search', [AdminController::class, 'search'])->name('admin.search');
 });
 
 
