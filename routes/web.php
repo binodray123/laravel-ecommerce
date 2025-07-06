@@ -28,6 +28,7 @@ use Surfsidemedia\Shoppingcart\Facades\Cart;
 Auth::routes();
 
 Route::get('/', [HomeController::class, 'index'])->name('home.index');
+Route::get('/about', [HomeController::class, 'about'])->name('about');
 Route::get('/shop', [ShopController::class, 'index'])->name('shop.index');
 Route::get('/shop/{product_slug}', [ShopController::class, 'product_details'])->name('shop.product.detail');
 Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
