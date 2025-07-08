@@ -41,7 +41,7 @@
             <div class="swiper-slide">
                 <div class="overflow-hidden position-relative h-100">
                     <div class="slideshow-character position-absolute bottom-0 ">
-                        <img loading="lazy" src="{{ asset('assets/images/slider2.jpg')}}" width="542" height="733"
+                        <img loading="lazy" src="{{ asset('assets/images/pabiess coll 1.png')}}" width="542" height="733"
                             alt="Woman Fashion 1"
                             class="slideshow-character__img animate animate_fade animate_btt animate_delay-9 w-auto h-auto" />
                     </div>
@@ -50,7 +50,7 @@
             <div class="swiper-slide">
                 <div class="overflow-hidden position-relative h-100">
                     <div class="slideshow-character position-absolute bottom-0 ">
-                        <img loading="lazy" src="{{ asset('assets/images/slider1.jpg')}}" width="542" height="733"
+                        <img loading="lazy" src="{{ asset('assets/images/pabiess coll 2.png')}}" width="542" height="733"
                             alt="Woman Fashion 1"
                             class="slideshow-character__img animate animate_fade animate_btt animate_delay-9 w-auto h-auto" />
                     </div>
@@ -59,7 +59,7 @@
             <div class="swiper-slide">
                 <div class="overflow-hidden position-relative h-100">
                     <div class="slideshow-character position-absolute bottom-0 ">
-                        <img loading="lazy" src="{{ asset('assets/images/slider3.jpg')}}" width="542" height="733"
+                        <img loading="lazy" src="{{ asset('assets/images/pabiess coll.png')}}" width="542" height="733"
                             alt="Woman Fashion 1"
                             class="slideshow-character__img animate animate_fade animate_btt animate_delay-9 w-auto h-auto" />
                     </div>
